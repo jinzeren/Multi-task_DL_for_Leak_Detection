@@ -1,0 +1,7 @@
+_target_: src.data.leak_detection_datamodule.LeakDetectionModule
+data_dir: ${paths.data_dir}/leak_detection
+batch_size: 128
+num_workers: 0
+pin_memory: False
+data_denoised: false
+transfer: true

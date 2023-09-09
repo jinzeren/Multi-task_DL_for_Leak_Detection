@@ -1,0 +1,55 @@
+# @package _global_
+
+# to execute this experiment run:
+# python train.py experiment=example
+
+defaults:
+  - override /data: leak_detection_o_transfer.yaml
+  - override /model: leak_detection_out_transfer.yaml
+  - override /callbacks: leak_detection.yaml
+  - override /trainer: leak_detection_out.yaml
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: ["leak_detection", "denoised", "out", "transfer"]
+
+seed: 12345
+
+trainer:
+  min_epochs: 10
+  max_epochs: 500
+  # gradient_clip_val: 0.5
+  accelerator: gpu
+  precision: 16
+
+model:
+  checkpoint_file: 2023-07-02_20-41-25
+  gamma: 2
+  from_scratch: false
+  use_representation: true
+  use_material: true
+  freezed_layers: []
+  optimizer:
+    lr: 0.001
+  
+data:
+  batch_size: 128
+  num_workers: 0
+
+callbacks:
+  early_stopping:
+    patience: 100
+
+logger:
+  tensorboard:
+    _target_: lightning.pytorch.loggers.tensorboard.TensorBoardLogger
+    save_dir: "${paths.output_dir}/tensorboard/"
+    name: "leak_detection_vae"
+    log_graph: False
+    default_hp_metric: True
+  csv:
+    _target_: lightning.pytorch.loggers.csv_logs.CSVLogger
+    save_dir: "${paths.output_dir}"
+    name: "csv/"
+    prefix: ""
